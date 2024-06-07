@@ -15,7 +15,7 @@ const schema = z.object({
   password: z.string().min(6, "Password minimum characters are 6"),
 });
 
-export default function SignIn() {
+export default function SignInScreen() {
   const {
     control,
     handleSubmit,

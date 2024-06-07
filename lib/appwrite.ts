@@ -1,3 +1,4 @@
+import { VideoType } from "@/appwrite";
 import { SignInSchemaType } from "@/schemas/SignIn";
 import {
   Account,
@@ -61,8 +62,8 @@ export const createUser = async ({
       ID.unique(),
       {
         accountId: userAcc.$id,
+        username,
         email,
-        password,
         avatar: avatarUrl,
       }
     );
@@ -77,6 +78,15 @@ export const createUser = async ({
 export async function signIn({ email, password }: SignInSchemaType) {
   try {
     const session = await account.createEmailPasswordSession(email, password);
+    return session;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+}
+
+export async function signOut() {
+  try {
+    const session = await account.deleteSession("current");
     return session;
   } catch (error: any) {
     throw new Error(error);
@@ -101,5 +111,54 @@ export async function getCurrentUser() {
     return currentUser.documents[0];
   } catch (error) {
     console.log(error);
+  }
+}
+
+export async function getAllVideos() {
+  try {
+    const posts = await databases.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId
+    );
+
+    return posts.documents as VideoType[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+
+export async function getLatestVideos() {
+  try {
+    const posts = await databases.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      [Query.orderDesc('$createdAt'), Query.limit(7)]
+    );
+
+    return posts.documents as VideoType[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+
+export async function searchPosts(query: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      [
+        Query.orderDesc('$createdAt'), 
+        Query.search('title', query)
+      ]
+    );
+
+    return posts.documents as VideoType[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
   }
 }

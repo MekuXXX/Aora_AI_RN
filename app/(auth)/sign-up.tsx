@@ -9,7 +9,7 @@ import { Link, router } from "expo-router";
 import { createUser } from "@/lib/appwrite";
 import { SignUpSchema, SignUpSchemaType } from "@/schemas/SignUp";
 
-export default function SignUp() {
+export default function SignUpScreen() {
   const {
     control,
     handleSubmit,

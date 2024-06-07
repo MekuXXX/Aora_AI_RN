@@ -51,6 +51,7 @@ export default function TabLayout() {
         name="home"
         options={{
           title: "Home",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               icon={Icons.home}
@@ -66,6 +67,7 @@ export default function TabLayout() {
         name="bookmark"
         options={{
           title: "Bookmark",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               icon={Icons.bookmark}
@@ -81,6 +83,7 @@ export default function TabLayout() {
         name="create"
         options={{
           title: "Create",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               icon={Icons.plus}
@@ -96,6 +99,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
+          headerShown: false,
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               icon={Icons.profile}

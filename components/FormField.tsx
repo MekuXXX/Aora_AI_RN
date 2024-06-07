@@ -27,7 +27,7 @@ export default function FormField({
       >
         {title}
       </Text>
-      <View className="">
+      <View>
         <TextInput
           className="w-full h-16 px-4 text-base text-white border-2 border-black-200 bg-black-100 rounded-2xl focus:border-secondary font-psemibold"
           {...inputProps}
