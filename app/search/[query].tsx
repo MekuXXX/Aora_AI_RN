@@ -4,12 +4,12 @@ import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
-import { searchPosts } from "@/lib/appwrite";
+import { searchVideos } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
 
-export default function QuerySearch() {
+export default function QuerySearchScreen() {
   const { query } = useLocalSearchParams();
 
   // TODO: Add loading spinner
@@ -19,7 +19,7 @@ export default function QuerySearch() {
     isLoading: videosIsLoading,
     error: videosError,
     refetch: refetchVideos,
-  } = useAppWrite<VideoType[]>(searchPosts, [query]);
+  } = useAppWrite<VideoType[]>(searchVideos, [query]);
 
   if (videosIsError) {
     Alert.alert("Error", videosError);

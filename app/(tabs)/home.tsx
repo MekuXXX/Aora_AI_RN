@@ -13,14 +13,16 @@ import { Images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
-import { getAllVideos, getLatestVideos} from "@/lib/appwrite";
+import { getAllVideos, getLatestVideos } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 export default function HomeScreen() {
+  const { user } = useGlobalContext();
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  // TODO: Add loading to videos 
+  // TODO: Add loading to videos
   const {
     data: videos,
     isError: videosIsError,
@@ -47,7 +49,6 @@ export default function HomeScreen() {
     Alert.alert("Error", videosError);
   }
 
-
   return (
     <SafeAreaView>
       <FlatList
@@ -62,10 +63,10 @@ export default function HomeScreen() {
               <View className="flex-row items-start justify-between mb-6">
                 <View>
                   <Text className="text-sm font-pmedium dark:text-gray-100">
-                    Welcome back
+                    Welcome back,
                   </Text>
                   <Text className="text-2xl font-psemibold dark:text-white">
-                    Mayushi
+                    {user?.username}
                   </Text>
                 </View>
                 <View>
@@ -82,9 +83,7 @@ export default function HomeScreen() {
                 <Text className="mb-3 text-lg dark:text-gray-100 font-pregular">
                   Latest Videos
                 </Text>
-                <Trending 
-                  posts={latestVideos} 
-                />
+                <Trending posts={latestVideos} />
               </View>
             </View>
           );

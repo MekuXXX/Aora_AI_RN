@@ -1,4 +1,4 @@
-import { VideoType } from "@/appwrite";
+import { UserType, VideoType } from "@/appwrite";
 import { SignInSchemaType } from "@/schemas/SignIn";
 import {
   Account,
@@ -68,7 +68,7 @@ export const createUser = async ({
       }
     );
 
-    return newUser;
+    return newUser as UserType;
   } catch (err: any) {
     console.log(err);
     throw new Error(err.message);
@@ -108,7 +108,7 @@ export async function getCurrentUser() {
     );
 
     if (!currentUser) throw new Error("User not found");
-    return currentUser.documents[0];
+    return currentUser.documents[0] as UserType;
   } catch (error) {
     console.log(error);
   }
@@ -128,13 +128,12 @@ export async function getAllVideos() {
   }
 }
 
-
 export async function getLatestVideos() {
   try {
     const posts = await databases.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.videoCollectionId,
-      [Query.orderDesc('$createdAt'), Query.limit(7)]
+      [Query.orderDesc("$createdAt"), Query.limit(7)]
     );
 
     return posts.documents as VideoType[];
@@ -144,16 +143,27 @@ export async function getLatestVideos() {
   }
 }
 
-
-export async function searchPosts(query: string) {
+export async function searchVideos(query: string) {
   try {
     const posts = await databases.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.videoCollectionId,
-      [
-        Query.orderDesc('$createdAt'), 
-        Query.search('title', query)
-      ]
+      [Query.orderDesc("$createdAt"), Query.search("title", query)]
+    );
+
+    return posts.documents as VideoType[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export async function getUserVideos(userId: string) {
+  try {
+    const posts = await databases.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      [Query.equal("users", userId)]
     );
 
     return posts.documents as VideoType[];

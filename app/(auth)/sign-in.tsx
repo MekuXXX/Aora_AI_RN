@@ -8,7 +8,8 @@ import * as z from "zod";
 import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { SignInSchemaType } from "@/schemas/SignIn";
-import { signIn } from "@/lib/appwrite";
+import { getCurrentUser, signIn } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const schema = z.object({
   email: z.string().email("Email is invalid").min(2),
@@ -16,6 +17,7 @@ const schema = z.object({
 });
 
 export default function SignInScreen() {
+  const { setIsLoggedIn, setUser } = useGlobalContext();
   const {
     control,
     handleSubmit,
@@ -31,6 +33,9 @@ export default function SignInScreen() {
   const onSubmit = async (data: SignInSchemaType) => {
     try {
       await signIn(data);
+      const user = await getCurrentUser();
+      setUser(user ?? null);
+      setIsLoggedIn(user ? true : false);
       router.replace("/home");
     } catch (err: any) {
       Alert.alert("Error", err.message);

@@ -1,3 +1,4 @@
+import { UserType } from "@/appwrite";
 import { getCurrentUser } from "@/lib/appwrite";
 import { createContext, useContext, useState, useEffect } from "react";
 import { Models } from "react-native-appwrite/src";
@@ -5,8 +6,8 @@ import { Models } from "react-native-appwrite/src";
 type ContextType = {
   isLoggedIn: boolean;
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  user: Models.Document | null;
-  setUser: React.Dispatch<React.SetStateAction<Models.Document | null>>;
+  user: UserType | null;
+  setUser: React.Dispatch<React.SetStateAction<UserType | null>>;
   isLoading: boolean;
 };
 
@@ -28,7 +29,7 @@ type GlobalProviderProps = {
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<Models.Document | null>(null);
+  const [user, setUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,7 +37,7 @@ export const GlobalProvider = ({ children }: GlobalProviderProps) => {
       .then((res) => {
         if (res) {
           setIsLoggedIn(true);
-          setUser(res);
+          setUser(res!);
         } else {
           setIsLoggedIn(false);
           setUser(null);

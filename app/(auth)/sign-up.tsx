@@ -8,8 +8,10 @@ import CustomButton from "@/components/CustomButton";
 import { Link, router } from "expo-router";
 import { createUser } from "@/lib/appwrite";
 import { SignUpSchema, SignUpSchemaType } from "@/schemas/SignUp";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 export default function SignUpScreen() {
+  const { setIsLoggedIn, setUser } = useGlobalContext();
   const {
     control,
     handleSubmit,
@@ -25,8 +27,10 @@ export default function SignUpScreen() {
 
   const onSubmit = async (data: SignUpSchemaType) => {
     try {
-      const res = createUser(data);
+      const user = await createUser(data);
 
+      setUser(user ?? null);
+      setIsLoggedIn(user ? true : false);
       router.replace("/home");
     } catch (err: any) {
       Alert.alert("Error", err.message);
