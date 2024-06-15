@@ -1,5 +1,4 @@
 import { UserType, VideoType } from "@/appwrite";
-import { FILE_TYPE } from "@/file-type";
 import { SignInSchemaType } from "@/schemas/SignIn";
 import { BaseFileSchemaType, VideoUploadSchemaType } from "@/schemas/Video";
 import {
@@ -12,6 +11,7 @@ import {
   Query,
   Storage,
 } from "react-native-appwrite/src";
+import { FILE_TYPE } from "@/lib/file-type";
 
 type UserAuthType = {
   username: string;

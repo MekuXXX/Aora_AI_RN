@@ -1,6 +1,5 @@
-import { FILE_TYPE } from "@/file-type";
 import * as ImagePicker from "expo-image-picker";
-import { Alert } from "react-native";
+import { FILE_TYPE } from "@/lib/file-type";
 
 export async function openPicker(
   type: FILE_TYPE,
@@ -18,7 +17,5 @@ export async function openPicker(
 
   if (!result.canceled) {
     onChange(result.assets[0]);
-  } else {
-    Alert.alert("Document picked", JSON.stringify(result, null, 2));
   }
 }

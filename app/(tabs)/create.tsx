@@ -17,9 +17,9 @@ import icons from "@/constants/icons";
 import CustomButton from "@/components/CustomButton";
 import { openPicker } from "@/lib/picker";
 import { router } from "expo-router";
-import { FILE_TYPE } from "@/file-type";
 import { createVideo } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { FILE_TYPE } from "@/lib/file-type";
 
 export default function CreateScreen() {
   const { user } = useGlobalContext();
@@ -108,6 +108,16 @@ export default function CreateScreen() {
                     </View>
                   </View>
                 )}
+                {Object.keys(value).length !== 0 && (
+                  <TouchableOpacity
+                    className="absolute top-10 right-4 w-6 h-6 flex items-center justify-center bg-secondary-200 rounded-full"
+                    onPress={() => onChange({})}
+                  >
+                    <Text className="text-sm dark:text-white font-pbold">
+                      X
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </TouchableOpacity>
             </View>
           )}
@@ -120,11 +130,12 @@ export default function CreateScreen() {
             required: true,
           }}
           render={({ field: { onChange, value } }) => (
-            <View className="mt-7 space-y-2">
+            <View className="mt-7 space-y-2 relative">
               <Text className="text-base dark:text-gray-100 font-pmedium">
                 Thumbnail Image
               </Text>
               <TouchableOpacity
+                className="relative"
                 onPress={() => openPicker(FILE_TYPE.IMAGE, onChange)}
               >
                 {Object.keys(value).length !== 0 ? (
@@ -146,6 +157,14 @@ export default function CreateScreen() {
                   </View>
                 )}
               </TouchableOpacity>
+              {Object.keys(value).length !== 0 && (
+                <TouchableOpacity
+                  className="absolute top-10 right-4 w-6 h-6 flex items-center justify-center bg-secondary-200 rounded-full"
+                  onPress={() => onChange({})}
+                >
+                  <Text className="text-sm dark:text-white font-pbold">X</Text>
+                </TouchableOpacity>
+              )}
             </View>
           )}
         />
