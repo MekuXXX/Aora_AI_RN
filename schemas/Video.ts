@@ -1,23 +1,28 @@
 import * as z from "zod";
 
-// Define the schema for the thumbnail
-const ThumbnailSchema = z.object({
-  name: z.string().min(1, "Thumbnail name must be at least 1 character long"),
-  uri: z.string().url("Thumbnail must be a valid URL"),
-  size: z.number().optional(),
+const BaseFileSchema = z.object({
+  name: z
+    .string()
+    .min(1, { message: "Name must be at least 1 character long" }),
+  uri: z.string().url({ message: "Must be a valid URL" }),
+  size: z.number(),
   mimeType: z.string().optional(),
   lastModified: z.number().optional(),
-  file: z.instanceof(File).optional(),
+  file: z.any().optional(),
 });
 
-// Define the schema for the video
-const VideoSchema = z.object({
-  uri: z.string().url("Video must be a valid URL"),
-  name: z.string().min(1, "Video name must be at least 1 character long"),
-  size: z.number().optional(),
-  mimeType: z.string().optional(),
-  lastModified: z.number().optional(),
-  file: z.instanceof(File).optional(),
+const ThumbnailSchema = BaseFileSchema.extend({
+  name: z
+    .string()
+    .min(1, { message: "Thumbnail name must be at least 1 character long" }),
+  uri: z.string().url({ message: "Thumbnail must be a valid URL" }),
+});
+
+const VideoSchema = BaseFileSchema.extend({
+  uri: z.string().url({ message: "Video must be a valid URL" }),
+  name: z
+    .string()
+    .min(1, { message: "Video name must be at least 1 character long" }),
 });
 
 export const VideoUploadSchema = z.object({
@@ -27,4 +32,5 @@ export const VideoUploadSchema = z.object({
   video: VideoSchema,
 });
 
+export type BaseFileSchemaType = z.infer<typeof BaseFileSchema>;
 export type VideoUploadSchemaType = z.infer<typeof VideoUploadSchema>;

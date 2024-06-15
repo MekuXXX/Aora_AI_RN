@@ -1,12 +1,16 @@
 import { UserType, VideoType } from "@/appwrite";
+import { FILE_TYPE } from "@/file-type";
 import { SignInSchemaType } from "@/schemas/SignIn";
+import { BaseFileSchemaType, VideoUploadSchemaType } from "@/schemas/Video";
 import {
   Account,
   Avatars,
   Client,
   Databases,
   ID,
+  ImageGravity,
   Query,
+  Storage,
 } from "react-native-appwrite/src";
 
 type UserAuthType = {
@@ -30,6 +34,7 @@ const client = new Client();
 const account = new Account(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
 client
   .setEndpoint(appWriteConfig.endpoint)
@@ -163,12 +168,90 @@ export async function getUserVideos(userId: string) {
     const posts = await databases.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.videoCollectionId,
-      [Query.equal("users", userId)]
+      [Query.equal("users", userId), Query.orderDesc("$createdAt")]
     );
 
     return posts.documents as VideoType[];
   } catch (error: any) {
     console.log(error);
+    throw new Error(error);
+  }
+}
+
+export async function getFilePreview(fileId: string, type: FILE_TYPE) {
+  switch (type) {
+    case FILE_TYPE.VIDEO:
+      return storage.getFileView(appWriteConfig.storageId, fileId);
+
+    case FILE_TYPE.IMAGE:
+      return storage.getFilePreview(
+        appWriteConfig.storageId,
+        fileId,
+        2000,
+        2000,
+        ImageGravity.Top,
+        100
+      );
+
+    default:
+      throw new Error("Invalid file type");
+  }
+}
+
+export async function uploadFile(file: BaseFileSchemaType, type: FILE_TYPE) {
+  if (!file) {
+    throw new Error("There is no file to upload");
+  }
+
+  const asset = {
+    name: file.name,
+    type: file.mimeType!,
+    uri: file.uri,
+    size: file.size,
+  };
+
+  try {
+    const uploadedFile = await storage.createFile(
+      appWriteConfig.storageId,
+      ID.unique(),
+      asset
+    );
+
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+
+    return fileUrl;
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error(error);
+  }
+}
+
+export async function createVideo(
+  userId: string,
+  videoData: VideoUploadSchemaType
+) {
+  try {
+    const [thumbnailUrl, videoUrl] = await Promise.all([
+      uploadFile(videoData.thumbnail, FILE_TYPE.IMAGE),
+      uploadFile(videoData.video, FILE_TYPE.VIDEO),
+    ]);
+
+    const newPost = await databases.createDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      ID.unique(),
+      {
+        title: videoData.title,
+        prompt: videoData.prompt,
+        thumbnail: thumbnailUrl,
+        video: videoUrl,
+        users: userId,
+      }
+    );
+
+    return newPost;
+  } catch (error: any) {
+    console.log(error.message);
     throw new Error(error);
   }
 }

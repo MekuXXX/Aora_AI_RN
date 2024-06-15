@@ -1,28 +1,19 @@
-import * as DoucmentPicker from "expo-document-picker";
+import { FILE_TYPE } from "@/file-type";
+import * as ImagePicker from "expo-image-picker";
 import { Alert } from "react-native";
 
-export enum PICKER_TYPE {
-  VIDEO,
-  IMAGE,
-}
-
-export function getPickerDataTypes(type: PICKER_TYPE): string[] {
-  switch (type) {
-    case PICKER_TYPE.IMAGE:
-      return ["image/png", "image/jpg", "image/jpeg"];
-    case PICKER_TYPE.VIDEO:
-      return ["video/mp4", "video/gif"];
-    default:
-      throw new Error("Not valid picker type");
-  }
-}
-
 export async function openPicker(
-  type: PICKER_TYPE,
+  type: FILE_TYPE,
   onChange: (...event: any[]) => void
 ) {
-  const result = await DoucmentPicker.getDocumentAsync({
-    type: getPickerDataTypes(type),
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes:
+      type === FILE_TYPE.IMAGE
+        ? ImagePicker.MediaTypeOptions.Images
+        : ImagePicker.MediaTypeOptions.Videos,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
   });
 
   if (!result.canceled) {

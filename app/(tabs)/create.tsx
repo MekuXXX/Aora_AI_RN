@@ -15,13 +15,19 @@ import { VideoUploadSchemaType } from "@/schemas/Video";
 import { ResizeMode, Video } from "expo-av";
 import icons from "@/constants/icons";
 import CustomButton from "@/components/CustomButton";
-import { PICKER_TYPE, openPicker } from "@/lib/picker";
+import { openPicker } from "@/lib/picker";
+import { router } from "expo-router";
+import { FILE_TYPE } from "@/file-type";
+import { createVideo } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 export default function CreateScreen() {
+  const { user } = useGlobalContext();
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<VideoUploadSchemaType>({
     // resolver: zodResolver(SignUpSchema),
     defaultValues: {
@@ -32,7 +38,16 @@ export default function CreateScreen() {
     },
   });
 
-  const onSubmit = async () => {};
+  const onSubmit = async (videoData: VideoUploadSchemaType) => {
+    try {
+      await createVideo(user?.$id!, videoData);
+      Alert.alert("Success", "Video upload successfully");
+      reset();
+      router.push("/home");
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    }
+  };
 
   return (
     <SafeAreaView className="h-full">
@@ -72,15 +87,13 @@ export default function CreateScreen() {
                 Upload Video
               </Text>
               <TouchableOpacity
-                onPress={() => openPicker(PICKER_TYPE.VIDEO, onChange)}
+                onPress={() => openPicker(FILE_TYPE.VIDEO, onChange)}
               >
                 {Object.keys(value).length !== 0 ? (
                   <>
                     <Video
                       source={{ uri: value.uri }}
                       resizeMode={ResizeMode.COVER}
-                      isLooping
-                      useNativeControls
                       className="w-full h-64 rounded-2xl"
                     />
                   </>
@@ -112,7 +125,7 @@ export default function CreateScreen() {
                 Thumbnail Image
               </Text>
               <TouchableOpacity
-                onPress={() => openPicker(PICKER_TYPE.IMAGE, onChange)}
+                onPress={() => openPicker(FILE_TYPE.IMAGE, onChange)}
               >
                 {Object.keys(value).length !== 0 ? (
                   <Image
@@ -159,6 +172,7 @@ export default function CreateScreen() {
         <CustomButton
           title="Submit & Publish"
           onPress={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
           className="mt-7"
         />
       </ScrollView>
