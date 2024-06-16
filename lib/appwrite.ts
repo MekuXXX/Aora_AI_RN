@@ -80,24 +80,6 @@ export const createUser = async ({
   }
 };
 
-export async function signIn({ email, password }: SignInSchemaType) {
-  try {
-    const session = await account.createEmailPasswordSession(email, password);
-    return session;
-  } catch (error: any) {
-    throw new Error(error);
-  }
-}
-
-export async function signOut() {
-  try {
-    const session = await account.deleteSession("current");
-    return session;
-  } catch (error: any) {
-    throw new Error(error);
-  }
-}
-
 export async function getCurrentUser() {
   try {
     const currentAccount = await account.get();
@@ -119,61 +101,20 @@ export async function getCurrentUser() {
   }
 }
 
-export async function getAllVideos() {
+export async function signIn({ email, password }: SignInSchemaType) {
   try {
-    const posts = await databases.listDocuments(
-      appWriteConfig.databaseId,
-      appWriteConfig.videoCollectionId
-    );
-
-    return posts.documents as VideoType[];
+    const session = await account.createEmailPasswordSession(email, password);
+    return session;
   } catch (error: any) {
-    console.log(error);
     throw new Error(error);
   }
 }
 
-export async function getLatestVideos() {
+export async function signOut() {
   try {
-    const posts = await databases.listDocuments(
-      appWriteConfig.databaseId,
-      appWriteConfig.videoCollectionId,
-      [Query.orderDesc("$createdAt"), Query.limit(7)]
-    );
-
-    return posts.documents as VideoType[];
+    const session = await account.deleteSession("current");
+    return session;
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
-  }
-}
-
-export async function searchVideos(query: string) {
-  try {
-    const posts = await databases.listDocuments(
-      appWriteConfig.databaseId,
-      appWriteConfig.videoCollectionId,
-      [Query.orderDesc("$createdAt"), Query.search("title", query)]
-    );
-
-    return posts.documents as VideoType[];
-  } catch (error: any) {
-    console.log(error);
-    throw new Error(error);
-  }
-}
-
-export async function getUserVideos(userId: string) {
-  try {
-    const posts = await databases.listDocuments(
-      appWriteConfig.databaseId,
-      appWriteConfig.videoCollectionId,
-      [Query.equal("users", userId), Query.orderDesc("$createdAt")]
-    );
-
-    return posts.documents as VideoType[];
-  } catch (error: any) {
-    console.log(error);
     throw new Error(error);
   }
 }
@@ -202,12 +143,12 @@ export async function uploadFile(file: BaseFileSchemaType, type: FILE_TYPE) {
   if (!file) {
     throw new Error("There is no file to upload");
   }
-
+  console.log(file);
   const asset = {
-    name: file.name,
+    name: file.fileName!,
     type: file.mimeType!,
+    size: file.fileSize!,
     uri: file.uri,
-    size: file.size,
   };
 
   try {
@@ -245,7 +186,7 @@ export async function createVideo(
         prompt: videoData.prompt,
         thumbnail: thumbnailUrl,
         video: videoUrl,
-        users: userId,
+        creator: userId,
       }
     );
 
@@ -254,4 +195,154 @@ export async function createVideo(
     console.log(error.message);
     throw new Error(error);
   }
+}
+
+export async function fetchVideos(queries: string[] = []) {
+  try {
+    const posts = await databases.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      queries
+    );
+
+    return posts.documents as VideoType[];
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export async function isBookmarked(userId: string, videoId: string) {
+  try {
+    const userDoc = await databases.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      [Query.select(["bookmarked.$id"])]
+    );
+
+    const bookmarks = userDoc.bookmarked || [];
+
+    for (let i = 0; i < bookmarks.length; ++i) {
+      if (bookmarks[i].$id === videoId) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
+
+export async function addBookmark(userId: string, videoId: string) {
+  try {
+    const videoDoc = await databases.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.videoCollectionId,
+      videoId,
+      [Query.select(["creator.$id"])]
+    );
+
+    if (videoDoc.creator.$id === userId) {
+      throw new Error("User cannot bookmark their own video.");
+    }
+
+    const userDoc = await databases.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      [Query.select(["bookmarked.$id"])]
+    );
+
+    const bookmarks = userDoc.bookmarked || [];
+    const isBookmarkedVideo = await isBookmarked(userId, videoId);
+
+    if (isBookmarkedVideo) {
+      throw new Error("Video is already bookmarked.");
+    }
+
+    bookmarks.push(videoId);
+
+    const updatedUser = await databases.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      { bookmarked: bookmarks }
+    );
+
+    return updatedUser;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export async function removeBookmark(userId: string, videoId: string) {
+  try {
+    const userDoc = await databases.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      [Query.select(["bookmarked.$id"])]
+    );
+
+    let newBookmarks = [];
+    let isVideoExist = false;
+    const bookmarks = userDoc.bookmarked || [];
+
+    for (let i = 0; i < bookmarks.length; ++i) {
+      if (bookmarks[i].$id === videoId) {
+        isVideoExist = true;
+      } else {
+        newBookmarks.push(bookmarks[i]);
+      }
+    }
+
+    if (!isVideoExist) {
+      throw new Error("Video is not bookmarked.");
+    }
+
+    const updatedUser = await databases.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.userCollectionId,
+      userId,
+      { bookmarked: newBookmarks }
+    );
+
+    return updatedUser;
+  } catch (error: any) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export async function getBookmarkedVideos(userId: string) {
+  const userDoc = await databases.getDocument(
+    appWriteConfig.databaseId,
+    appWriteConfig.userCollectionId,
+    userId
+  );
+
+  return userDoc.bookmarked as VideoType[];
+}
+
+export async function queryBookmarkedVideos(userId: string, query: string) {
+  const userDoc = await databases.getDocument(
+    appWriteConfig.databaseId,
+    appWriteConfig.userCollectionId,
+    userId
+  );
+
+  query = query.toLowerCase();
+  const queriedBookmarks = [];
+
+  for (let i = 0; i < userDoc.bookmarked.length; ++i) {
+    if (userDoc.bookmarked[i].title.toLowerCase().includes(query)) {
+      queriedBookmarks.push(userDoc.bookmarked[i]);
+    }
+  }
+
+  return queriedBookmarks as VideoType[];
 }

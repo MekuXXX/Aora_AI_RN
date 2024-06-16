@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Alert,
   Image,
@@ -8,12 +9,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
 import FormField from "@/components/FormField";
 import { Controller, useForm } from "react-hook-form";
 import { VideoUploadSchemaType } from "@/schemas/Video";
 import { ResizeMode, Video } from "expo-av";
-import icons from "@/constants/icons";
+import { Icons } from "@/constants";
 import CustomButton from "@/components/CustomButton";
 import { openPicker } from "@/lib/picker";
 import { router } from "expo-router";
@@ -101,7 +101,7 @@ export default function CreateScreen() {
                   <View className="w-full h-40 px-4 dark:bg-black-100 rounded-2xl justify-center items-center">
                     <View className="w-14 h-14 border border-dashed border-secondary-100 flex justify-center items-center">
                       <Image
-                        source={icons.upload}
+                        source={Icons.upload}
                         className="w-1/2 h-1/2"
                         resizeMode="contain"
                       />
@@ -147,7 +147,7 @@ export default function CreateScreen() {
                 ) : (
                   <View className="w-full border-black-200 h-40 px-4 dark:bg-black-100 rounded-2xl justify-center items-center">
                     <Image
-                      source={icons.upload}
+                      source={Icons.upload}
                       className="w-1/2 h-1/2"
                       resizeMode="contain"
                     />

@@ -12,9 +12,14 @@ import React, { useState } from "react";
 import { Icons } from "@/constants";
 import { router, usePathname } from "expo-router";
 
-interface SearchInputProps extends TextInputProps {}
+interface SearchInputProps extends TextInputProps {
+  path?: string;
+}
 
-export default function SearchInput(props: SearchInputProps) {
+export default function SearchInput({
+  path = "search",
+  ...props
+}: SearchInputProps) {
   const pathName = usePathname();
   const [query, setQuery] = useState<string>("");
 
@@ -23,21 +28,24 @@ export default function SearchInput(props: SearchInputProps) {
       <TextInput
         className="flex-1 mr-2 text-base dark:text-white font-psemibold"
         value={query}
-        placeholderTextColor='#CDCDE0'
+        placeholderTextColor="#CDCDE0"
         onChangeText={(new_query: string) => setQuery(new_query)}
         {...props}
       />
 
-      <TouchableOpacity onPress={() => {
+      <TouchableOpacity
+        onPress={() => {
           if (!query) {
-            return Alert.alert("Missing query", "Please input something to search results across database")
+            return Alert.alert(
+              "Missing query",
+              "Please input something to search results across database"
+            );
           }
-          
-          if (pathName.startsWith('/search/')) {
-            router.setParams({query});
-          }
-          else {
-            router.push(`search/${query}`);
+
+          if (pathName.startsWith("/search/")) {
+            router.setParams({ query });
+          } else {
+            router.push(`${path}/${query}`);
           }
         }}
       >

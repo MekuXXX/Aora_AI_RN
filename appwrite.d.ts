@@ -12,5 +12,5 @@ type VideoType = Models.Document & {
   thumbnail: string;
   prompt: string;
   video: string;
-  users: UserType;
+  creator: UserType;
 };

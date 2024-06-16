@@ -1,3 +1,4 @@
+import React from "react";
 import {
   DarkTheme,
   DefaultTheme,
@@ -64,6 +65,10 @@ function RootLayoutNav() {
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen
             name="search/[query]"
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="search/bookmarked/[query]"
             options={{ headerShown: false }}
           />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />

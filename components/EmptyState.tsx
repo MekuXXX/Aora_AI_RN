@@ -31,7 +31,7 @@ export default function EmptyState({ title, subtitle }: EmptyStateProps) {
       <CustomButton
         title="Create Video"
         onPress={() => router.push("/create")}
-        className="w-full"
+        className="w-full mt-12"
       />
     </View>
   );

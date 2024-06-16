@@ -3,22 +3,22 @@ import {
   FlatList,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
-import { getUserVideos, signOut } from "@/lib/appwrite";
+import { fetchVideos, signOut } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
 import { useGlobalContext } from "@/context/GlobalProvider";
-import icons from "@/constants/icons";
+import { Icons } from "@/constants";
 import Avatar from "@/components/Avatar";
 import InfoBox from "@/components/InfoBox";
 import { router } from "expo-router";
+import { Query } from "react-native-appwrite/src";
 
 export default function ProfileScreen() {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
@@ -30,7 +30,9 @@ export default function ProfileScreen() {
     isLoading: videosIsLoading,
     error: videosError,
     refetch: refetchVideos,
-  } = useAppWrite<VideoType[]>(getUserVideos, [user?.$id]);
+  } = useAppWrite<VideoType[]>(fetchVideos, [
+    [Query.equal("creator", user?.$id!)],
+  ]);
 
   if (videosIsError) {
     Alert.alert("Error", videosError);
@@ -63,7 +65,7 @@ export default function ProfileScreen() {
                 onPress={logout}
               >
                 <Image
-                  source={icons.logout}
+                  source={Icons.logout}
                   className="w-6 h-6"
                   resizeMode="contain"
                 />

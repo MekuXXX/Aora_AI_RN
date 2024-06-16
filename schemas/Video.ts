@@ -1,36 +1,25 @@
 import * as z from "zod";
 
-const BaseFileSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Name must be at least 1 character long" }),
+const ImagePickerAssetSchema = z.object({
   uri: z.string().url({ message: "Must be a valid URL" }),
-  size: z.number(),
+  width: z.number(),
+  height: z.number(),
+  fileSize: z.number().optional(),
   mimeType: z.string().optional(),
-  lastModified: z.number().optional(),
-  file: z.any().optional(),
-});
-
-const ThumbnailSchema = BaseFileSchema.extend({
-  name: z
-    .string()
-    .min(1, { message: "Thumbnail name must be at least 1 character long" }),
-  uri: z.string().url({ message: "Thumbnail must be a valid URL" }),
-});
-
-const VideoSchema = BaseFileSchema.extend({
-  uri: z.string().url({ message: "Video must be a valid URL" }),
-  name: z
-    .string()
-    .min(1, { message: "Video name must be at least 1 character long" }),
+  assetId: z.string().nullable().optional(),
+  type: z.enum(["image", "video"]).optional(),
+  fileName: z.string().nullable().optional(),
+  exif: z.record(z.any()).nullable().optional(),
+  base64: z.string().nullable().optional(),
+  duration: z.number().nullable().optional(),
 });
 
 export const VideoUploadSchema = z.object({
   title: z.string().min(1, "Title must be more that more 1 character"),
   prompt: z.string().min(1, "Prompt must be more that more 1 character"),
-  thumbnail: ThumbnailSchema,
-  video: VideoSchema,
+  thumbnail: ImagePickerAssetSchema,
+  video: ImagePickerAssetSchema,
 });
 
-export type BaseFileSchemaType = z.infer<typeof BaseFileSchema>;
+export type BaseFileSchemaType = z.infer<typeof ImagePickerAssetSchema>;
 export type VideoUploadSchemaType = z.infer<typeof VideoUploadSchema>;

@@ -1,26 +1,18 @@
-import {
-  Alert,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { useEffect, useState } from "react";
+import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
+import { queryBookmarkedVideos } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
-import { fetchVideos, getBookmarkedVideos } from "@/lib/appwrite";
-import { Query } from "react-native-appwrite/src";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
-export default function QuerySearchScreen() {
+export default function QueryBookmarkedSceen() {
   const { user } = useGlobalContext();
-  const [refreshing, setRefreshing] = useState<boolean>(false);
+  const { query } = useLocalSearchParams();
 
   // TODO: Add loading spinner
   const {
@@ -28,22 +20,16 @@ export default function QuerySearchScreen() {
     isError: videosIsError,
     isLoading: videosIsLoading,
     error: videosError,
-    refetch: videosRefetch,
-  } = useAppWrite<VideoType[]>(getBookmarkedVideos, [user?.$id]);
+    refetch: refetchVideos,
+  } = useAppWrite<VideoType[]>(queryBookmarkedVideos, [user?.$id, query]);
 
   if (videosIsError) {
     Alert.alert("Error", videosError);
   }
 
-  const onRefresh = () => {
-    setRefreshing(true);
-    videosRefetch();
-    setRefreshing(false);
-  };
-
   useEffect(() => {
-    videosRefetch();
-  }, [user]);
+    refetchVideos();
+  }, [query]);
 
   return (
     <SafeAreaView>
@@ -51,16 +37,16 @@ export default function QuerySearchScreen() {
         data={videos}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => {
-          return <VideoCard video={item} refreshFn={videosRefetch} />;
+          return <VideoCard video={item} />;
         }}
         ListHeaderComponent={() => {
           return (
             <View className="px-4 my-6">
               <Text className="text-sm font-pmedium dark:text-gray-100">
-                Bookmarked
+                Search results
               </Text>
               <Text className="text-2xl font-psemibold dark:text-white">
-                {user?.username}
+                {query}
               </Text>
 
               <View className="mt-6 mb-8">
@@ -78,9 +64,6 @@ export default function QuerySearchScreen() {
             subtitle="No videos found for this search query"
           />
         )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
       />
     </SafeAreaView>
   );

@@ -4,10 +4,11 @@ import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
-import { searchVideos } from "@/lib/appwrite";
+import { fetchVideos } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
+import { Query } from "react-native-appwrite/src";
 
 export default function QuerySearchScreen() {
   const { query } = useLocalSearchParams();
@@ -19,7 +20,9 @@ export default function QuerySearchScreen() {
     isLoading: videosIsLoading,
     error: videosError,
     refetch: refetchVideos,
-  } = useAppWrite<VideoType[]>(searchVideos, [query]);
+  } = useAppWrite<VideoType[]>(fetchVideos, [
+    [Query.search("title", query as string), Query.orderDesc("$createdAt")],
+  ]);
 
   if (videosIsError) {
     Alert.alert("Error", videosError);

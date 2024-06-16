@@ -1,5 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { FILE_TYPE } from "@/lib/file-type";
+import { ImagePickerResult } from "expo-image-picker";
 
 export async function openPicker(
   type: FILE_TYPE,

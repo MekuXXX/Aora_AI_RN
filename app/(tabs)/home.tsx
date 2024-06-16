@@ -13,11 +13,12 @@ import { Images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
 import EmptyState from "@/components/EmptyState";
-import { getAllVideos, getLatestVideos } from "@/lib/appwrite";
+import { fetchVideos } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { Query } from "react-native-appwrite/src";
 
 export default function HomeScreen() {
   const { user } = useGlobalContext();
@@ -29,7 +30,7 @@ export default function HomeScreen() {
     isLoading: videosIsLoading,
     error: videosError,
     refetch: videosRefetch,
-  } = useAppWrite<VideoType[]>(getAllVideos);
+  } = useAppWrite<VideoType[]>(fetchVideos);
 
   // Adding loading to latest videos
   const {
@@ -37,7 +38,9 @@ export default function HomeScreen() {
     isError: latestVideosIsError,
     isLoading: latestVideosIsLoading,
     error: latestVideosError,
-  } = useAppWrite<VideoType[]>(getLatestVideos);
+  } = useAppWrite<VideoType[]>(() =>
+    fetchVideos([Query.orderDesc("$createdAt")])
+  );
 
   const onRefresh = () => {
     setRefreshing(true);
