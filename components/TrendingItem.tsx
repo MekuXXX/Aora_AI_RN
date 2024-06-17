@@ -2,15 +2,13 @@ import {
   Image,
   ImageBackground,
   StyleSheet,
-  Text,
   TouchableOpacity,
-  View,
 } from "react-native";
 import React, { useState } from "react";
 import * as AnimaTable from "react-native-animatable";
 import { VideoType } from "@/appwrite";
-import { Images } from "@/constants";
 import { Icons } from "@/constants";
+import { ResizeMode, Video } from "expo-av";
 
 type TrendingItemProps = {
   activeItemId: string;
@@ -54,12 +52,21 @@ export default function TrendingItem({
       duration={500}
     >
       {play ? (
-        <Text className="dark:text-white">Playing</Text>
+        <Video
+          source={{ uri: item.video }}
+          className="w-52 h-72 rounded-[33px] mt-3 bg-white/10"
+          resizeMode={ResizeMode.COVER}
+          useNativeControls
+          shouldPlay
+        />
       ) : (
-        <TouchableOpacity className="relative items-center justify-center">
+        <TouchableOpacity
+          className="relative items-center justify-center"
+          onPress={() => setPlay((prev) => !prev)}
+        >
           <ImageBackground
-            source={Images.cards}
-            className="w-52 h-52 rounded-[35px] my-5 overflow-clip shadow-lg shadow-black/50"
+            source={{ uri: item.thumbnail }}
+            className="w-52 h-52 rounded-[35px] my-5 overflow-clip dark:shadow-lg shadow-md dark:shadow-black/50"
             resizeMode="cover"
           />
           <Image

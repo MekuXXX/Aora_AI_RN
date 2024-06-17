@@ -1,17 +1,11 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-} from "react-native";
+import { ScrollView, StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { Images } from "@/constants";
 import CustomButton from "@/components/CustomButton";
 import { Redirect, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { ThemedText, ThemedSafeAreaView } from "@/components/Themed";
 
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
@@ -21,7 +15,7 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView className="h-full">
+    <ThemedSafeAreaView>
       <ScrollView contentContainerStyle={{ height: "100%" }}>
         <View className="items-center justify-center w-full h-full px-4">
           <Image
@@ -35,10 +29,10 @@ export default function App() {
             resizeMode="contain"
           />
           <View className="relative mt-5">
-            <Text className="text-3xl font-bold text-center text-white">
+            <ThemedText className="text-3xl font-bold text-center">
               Discover Endless Possiblities with{" "}
               <Text className="font-extrabold text-secondary-200">Aora</Text>
-            </Text>
+            </ThemedText>
             <Image
               source={Images.path}
               resizeMode="contain"
@@ -59,7 +53,7 @@ export default function App() {
           <StatusBar backgroundColor={"#161622"} style={"inverted"} />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

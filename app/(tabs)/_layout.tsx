@@ -1,12 +1,10 @@
 import React from "react";
 import { Tabs } from "expo-router";
-import { Image, ImageSourcePropType } from "react-native";
+import { Image, ImageSourcePropType, View, Text } from "react-native";
 
-import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/useColorScheme";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { Text, View } from "@/components/Themed";
 import { Icons } from "@/constants";
+import { useGlobalContext } from "@/context/GlobalProvider";
+import { ThemedText } from "@/components/Themed";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -23,27 +21,31 @@ function TabBarIcon(props: {
         tintColor={props.color}
         className="w-5 h-5"
       />
-      <Text
-        className={`text-xs ${
+      <ThemedText
+        className={`text-xs te ${
           props.focused ? "font-psemibold" : "font-pregular"
         }`}
       >
         {props.name}
-      </Text>
+      </ThemedText>
     </View>
   );
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+  const { theme } = useGlobalContext();
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: useClientOnlyValue(false, true),
+        tabBarActiveTintColor: "#FFA001",
+        tabBarInactiveTintColor: "#CDCDE0",
         tabBarShowLabel: false,
-        tabBarInactiveTintColor: "#FFA001",
+        tabBarStyle: {
+          backgroundColor: theme === "dark" ? "#161622" : "#FFF",
+          borderTopWidth: 1,
+          borderTopColor: theme === "dark" ? "#232533" : "#EEE",
+          height: 64,
+        },
       }}
     >
       <Tabs.Screen

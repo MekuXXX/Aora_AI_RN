@@ -10,9 +10,14 @@ import { ResizeMode, Video } from "expo-av";
 type VideoCardProps = {
   video: VideoType;
   refreshFn?: () => void;
+  noBookmark?: boolean;
 };
 
-export default function VideoCard({ video, refreshFn }: VideoCardProps) {
+export default function VideoCard({
+  video,
+  refreshFn,
+  noBookmark,
+}: VideoCardProps) {
   const { user } = useGlobalContext();
   const [isBookmarkedVideo, setIsBookmarkedVideo] = useState<boolean>(false);
   const { title, thumbnail, video: videoLink, creator } = video;
@@ -62,29 +67,23 @@ export default function VideoCard({ video, refreshFn }: VideoCardProps) {
           </View>
         </View>
 
-        <TouchableOpacity onPress={handleBookmarking}>
-          <View className="pt-2">
-            {isBookmarkedVideo ? (
+        {!noBookmark && (
+          <TouchableOpacity onPress={handleBookmarking}>
+            <View className="pt-2">
               <Image
-                source={Icons.eyeHide}
+                source={isBookmarkedVideo ? Icons.eyeHide : Icons.bookmark}
                 className="w-6 h-6"
                 resizeMode="contain"
               />
-            ) : (
-              <Image
-                source={Icons.bookmark}
-                className="w-6 h-6"
-                resizeMode="contain"
-              />
-            )}
-          </View>
-        </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
 
       {play ? (
         <Video
           source={{ uri: videoLink }}
-          className="w-full h-60 rounded-xl mt-3"
+          className="w-full h-72 rounded-xl mt-3"
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
           shouldPlay
@@ -93,7 +92,7 @@ export default function VideoCard({ video, refreshFn }: VideoCardProps) {
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
-          className="relative items-center justify-center w-full mt-3 h-60 rounded-xl"
+          className="relative items-center justify-center w-full mt-3 h-72 rounded-xl"
         >
           <Image
             source={{ uri: thumbnail }}

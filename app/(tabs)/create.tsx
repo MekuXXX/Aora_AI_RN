@@ -20,6 +20,7 @@ import { router } from "expo-router";
 import { createVideo } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { FILE_TYPE } from "@/lib/file-type";
+import { ThemedSafeAreaView } from "@/components/Themed";
 
 export default function CreateScreen() {
   const { user } = useGlobalContext();
@@ -50,7 +51,7 @@ export default function CreateScreen() {
   };
 
   return (
-    <SafeAreaView className="h-full">
+    <ThemedSafeAreaView>
       <ScrollView className="px-4 my-10">
         <Text className="text-2xl dark:text-white font-psemibold">
           Upload video
@@ -98,7 +99,7 @@ export default function CreateScreen() {
                     />
                   </>
                 ) : (
-                  <View className="w-full h-40 px-4 dark:bg-black-100 rounded-2xl justify-center items-center">
+                  <View className="w-full h-40 px-4 bg-gray-200 dark:bg-black-100 rounded-2xl justify-center items-center">
                     <View className="w-14 h-14 border border-dashed border-secondary-100 flex justify-center items-center">
                       <Image
                         source={Icons.upload}
@@ -145,7 +146,7 @@ export default function CreateScreen() {
                     resizeMode="cover"
                   />
                 ) : (
-                  <View className="w-full border-black-200 h-40 px-4 dark:bg-black-100 rounded-2xl justify-center items-center">
+                  <View className="w-full border-black-200 h-40 px-4 bg-gray-200 dark:bg-black-100 rounded-2xl justify-center items-center">
                     <Image
                       source={Icons.upload}
                       className="w-1/2 h-1/2"
@@ -195,7 +196,7 @@ export default function CreateScreen() {
           className="mt-7"
         />
       </ScrollView>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

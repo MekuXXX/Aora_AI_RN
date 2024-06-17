@@ -20,13 +20,13 @@ type UserAuthType = {
 };
 
 export const appWriteConfig = {
-  endpoint: "https://cloud.appwrite.io/v1",
-  platform: "com.mayushi_23333.aora",
-  projectId: "664390c7000aeed69059",
-  databaseId: "6643921900026f146384",
-  userCollectionId: "6643924700332bea6907",
-  videoCollectionId: "664392620032fb7205e8",
-  storageId: "664393ce002c7eeeff7d",
+  endpoint: process.env.EXPO_PUBLIC_ENDPOINT!,
+  platform: process.env.EXPO_PUBLIC_PLATFORM!,
+  projectId: process.env.EXPO_PUBLIC_PROJECT_ID!,
+  databaseId: process.env.EXPO_PUBLIC_DATABASE_ID!,
+  userCollectionId: process.env.EXPO_PUBLIC_USER_COLLECTION_ID!,
+  videoCollectionId: process.env.EXPO_PUBLIC_VIDEO_COLLECTION_ID!,
+  storageId: process.env.EXPO_PUBLIC_STORAGE_ID!,
 };
 
 // Init your React Native SDK

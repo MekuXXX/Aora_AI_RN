@@ -7,7 +7,6 @@ import {
   View,
 } from "react-native";
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "@/components/EmptyState";
 import { fetchVideos, signOut } from "@/lib/appwrite";
 import { useAppWrite } from "@/hooks/useAppWrite";
@@ -19,10 +18,11 @@ import Avatar from "@/components/Avatar";
 import InfoBox from "@/components/InfoBox";
 import { router } from "expo-router";
 import { Query } from "react-native-appwrite/src";
+import { ThemedSafeAreaView } from "@/components/Themed";
+import ToggleThemeButton from "@/components/ToggleThemeButton";
 
 export default function ProfileScreen() {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
-
   // TODO: Add loading spinner
   const {
     data: videos,
@@ -50,26 +50,26 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView>
+    <ThemedSafeAreaView>
       <FlatList
         data={videos}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => {
-          return <VideoCard video={item} />;
+          return <VideoCard video={item} noBookmark={true} />;
         }}
         ListHeaderComponent={() => {
           return (
             <View className="items-center justify-center w-full px-4 mt-6 mb-12">
-              <TouchableOpacity
-                className="items-end w-full mb-10"
-                onPress={logout}
-              >
-                <Image
-                  source={Icons.logout}
-                  className="w-6 h-6"
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
+              <View className="flex-row justify-between w-full mb-10">
+                <ToggleThemeButton />
+                <TouchableOpacity onPress={logout}>
+                  <Image
+                    source={Icons.logout}
+                    className="w-8 h-8"
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+              </View>
 
               <Avatar uri={user?.avatar} width={75} height={75} />
               <InfoBox
@@ -102,7 +102,7 @@ export default function ProfileScreen() {
           />
         )}
       />
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

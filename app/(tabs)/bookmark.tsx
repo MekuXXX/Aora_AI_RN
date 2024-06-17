@@ -7,16 +7,14 @@ import {
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "@/components/SearchInput";
 import EmptyState from "@/components/EmptyState";
 import { useAppWrite } from "@/hooks/useAppWrite";
 import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
-import { fetchVideos, getBookmarkedVideos } from "@/lib/appwrite";
-import { Query } from "react-native-appwrite/src";
+import { getBookmarkedVideos } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { ThemedSafeAreaView } from "@/components/Themed";
 
 export default function QuerySearchScreen() {
   const { user } = useGlobalContext();
@@ -46,7 +44,7 @@ export default function QuerySearchScreen() {
   }, [user]);
 
   return (
-    <SafeAreaView>
+    <ThemedSafeAreaView>
       <FlatList
         data={videos}
         keyExtractor={(item) => item.$id}
@@ -82,7 +80,7 @@ export default function QuerySearchScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

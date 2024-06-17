@@ -1,14 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TextInputProps,
-  View,
-} from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { FieldError } from "react-hook-form";
+import { ThemeTextInput, ThemedTextInputProps } from "@/components/Themed";
 
-interface FormFieldProps extends TextInputProps {
+interface FormFieldProps extends ThemedTextInputProps {
   title: string;
   titleClasses?: string;
   error?: FieldError;
@@ -23,16 +18,15 @@ export default function FormField({
   return (
     <View className="mt-4 space-y-2">
       <Text
-        className={`text-base text-gray-100 font-psemibold ${titleClasses}`}
+        className={`text-base dark:text-gray-100 font-psemibold ${titleClasses}`}
       >
         {title}
       </Text>
       <View>
-        <TextInput
-          className="w-full h-16 px-4 text-base text-white border-2 border-black-200 bg-black-100 rounded-2xl focus:border-secondary font-psemibold"
-          {...inputProps}
-        />
-        {error && <Text className="mt-1 text-red-500">{error.message}</Text>}
+        <ThemeTextInput className="w-full h-16" {...inputProps} />
+        {error?.message && (
+          <Text className="mt-1 text-red-500">{error.message}</Text>
+        )}
       </View>
     </View>
   );

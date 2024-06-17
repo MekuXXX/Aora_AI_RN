@@ -1,15 +1,8 @@
 import React from "react";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-
-import { useColorScheme } from "@/components/useColorScheme";
 import { GlobalProvider } from "@/context/GlobalProvider";
 
 export {
@@ -54,26 +47,18 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
     <GlobalProvider>
-      <ThemeProvider value={colorScheme !== "light" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="search/[query]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="search/bookmarked/[query]"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-        </Stack>
-      </ThemeProvider>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="search/bookmarked/[query]"
+          options={{ headerShown: false }}
+        />
+      </Stack>
     </GlobalProvider>
   );
 }

@@ -9,6 +9,7 @@ import { Link, router } from "expo-router";
 import { createUser } from "@/lib/appwrite";
 import { SignUpSchema, SignUpSchemaType } from "@/schemas/SignUp";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { ThemedText } from "@/components/Themed";
 
 export default function SignUpScreen() {
   const { setIsLoggedIn, setUser } = useGlobalContext();
@@ -44,9 +45,9 @@ export default function SignUpScreen() {
         resizeMode="contain"
         className="w-[115px] h-[35px]"
       />
-      <Text className="mt-6 text-2xl text-white font-psemibold">
+      <ThemedText className="mt-6 text-2xl text-white font-psemibold">
         Login to Aora
-      </Text>
+      </ThemedText>
       <View className="w-full mt-8 space-y-4">
         <Controller
           control={control}

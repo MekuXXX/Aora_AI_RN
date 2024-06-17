@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Images } from "@/constants";
 import SearchInput from "@/components/SearchInput";
 import Trending from "@/components/Trending";
@@ -19,6 +18,7 @@ import { VideoType } from "@/appwrite";
 import VideoCard from "@/components/VideoCard";
 import { useGlobalContext } from "@/context/GlobalProvider";
 import { Query } from "react-native-appwrite/src";
+import { ThemedSafeAreaView } from "@/components/Themed";
 
 export default function HomeScreen() {
   const { user } = useGlobalContext();
@@ -32,14 +32,14 @@ export default function HomeScreen() {
     refetch: videosRefetch,
   } = useAppWrite<VideoType[]>(fetchVideos);
 
-  // Adding loading to latest videos
+  // TODO: Adding loading to latest videos
   const {
     data: latestVideos,
     isError: latestVideosIsError,
     isLoading: latestVideosIsLoading,
     error: latestVideosError,
   } = useAppWrite<VideoType[]>(() =>
-    fetchVideos([Query.orderDesc("$createdAt")])
+    fetchVideos([Query.orderDesc("$createdAt"), Query.limit(7)])
   );
 
   const onRefresh = () => {
@@ -53,7 +53,7 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView>
+    <ThemedSafeAreaView>
       <FlatList
         data={videos}
         keyExtractor={(item) => item.$id}
@@ -103,7 +103,7 @@ export default function HomeScreen() {
       />
 
       <Text>HomeScreen</Text>
-    </SafeAreaView>
+    </ThemedSafeAreaView>
   );
 }
 

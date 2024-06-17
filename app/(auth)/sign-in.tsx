@@ -10,6 +10,7 @@ import { Link, router } from "expo-router";
 import { SignInSchemaType } from "@/schemas/SignIn";
 import { getCurrentUser, signIn } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import { ThemedText } from "@/components/Themed";
 
 const schema = z.object({
   email: z.string().email("Email is invalid").min(2),
@@ -49,9 +50,9 @@ export default function SignInScreen() {
         resizeMode="contain"
         className="w-[115px] h-[35px]"
       />
-      <Text className="mt-6 text-2xl text-white font-psemibold">
+      <ThemedText className="mt-6 text-2xl font-psemibold">
         Login to Aora
-      </Text>
+      </ThemedText>
       <View className="w-full mt-8 space-y-4">
         <Controller
           control={control}
